@@ -1,0 +1,14 @@
+services:
+  web:
+    image: node:alpine
+    working_dir: /app
+    command: node server.mjs
+    volumes:
+      - .:/app:ro
+    ports:
+      - '8080:8080'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    user: node
+    restart: unless-stopped

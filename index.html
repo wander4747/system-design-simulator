@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'"
+    />
+    <title>System Design Simulator</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>System Design Simulator</h1>
+      <select id="preset" aria-label="Preset"></select>
+      <button id="play" class="primary" type="button">▶ Iniciar</button>
+      <label class="inline"
+        >Velocidade
+        <select id="speed">
+          <option value="1">1×</option>
+          <option value="2">2×</option>
+          <option value="4">4×</option>
+        </select>
+      </label>
+      <button id="reset" type="button">↺ Reiniciar</button>
+      <span class="spacer"></span>
+      <label class="inline users"
+        >👥 Usuários
+        <input id="users" type="range" min="0" max="20000" step="50" value="500" />
+        <output id="usersOut">500</output>
+      </label>
+      <label class="inline"
+        >Padrão
+        <select id="pattern">
+          <option value="steady">Constante</option>
+          <option value="wave">Onda</option>
+          <option value="ramp">Rampa</option>
+        </select>
+      </label>
+      <button id="spike3" type="button" class="warn">📈 Pico ×3</button>
+      <button id="spike10" type="button" class="warn">🚀 Pico ×10</button>
+      <button id="chaos" type="button" class="danger">💥 Derrubar nó</button>
+    </header>
+
+    <main class="layout">
+      <aside class="palette" id="palette"><h2>Componentes</h2></aside>
+      <section class="stage">
+        <svg id="canvas" role="application" aria-label="Diagrama da arquitetura"></svg>
+        <p class="hint">
+          Arraste o círculo da direita de um nó até outro para conectar · clique para selecionar · Delete remove
+        </p>
+      </section>
+      <aside class="inspector" id="inspector">
+        <h2>Propriedades</h2>
+        <p class="muted">Selecione um nó.</p>
+      </aside>
+    </main>
+
+    <footer class="bottom">
+      <div class="kpis">
+        <div class="kpi"><span>RPS de entrada</span><b id="kRps">0</b></div>
+        <div class="kpi"><span>Sucesso</span><b id="kOk">100%</b></div>
+        <div class="kpi"><span>Latência média</span><b id="kLat">0 ms</b></div>
+        <div class="kpi">
+          <span
+            >p99 (est.)
+            <span
+              class="info"
+              tabindex="0"
+              role="img"
+              aria-label="Estimativa da latência dos 1% de pedidos mais lentos. Fica sempre acima da média e dispara quando algum componente satura."
+              data-tip="Estimativa da latência dos 1% de pedidos mais lentos. Fica sempre acima da média e dispara quando algum componente satura."
+              >i</span
+            ></span
+          ><b id="kP99">0 ms</b>
+        </div>
+      </div>
+      <div class="charts">
+        <figure>
+          <figcaption>
+            Latência (ms)
+            <span
+              class="info"
+              tabindex="0"
+              role="img"
+              aria-label="Tempo médio que um pedido leva do usuário até a resposta, somando todos os componentes no caminho. Sobe quando algum componente chega perto do limite e a fila cresce."
+              data-tip="Tempo médio que um pedido leva do usuário até a resposta, somando todos os componentes no caminho. Sobe quando algum componente chega perto do limite e a fila cresce."
+              >i</span
+            >
+          </figcaption>
+          <canvas id="chLat" width="320" height="90"></canvas>
+        </figure>
+        <figure>
+          <figcaption>
+            Erros (%)
+            <span
+              class="info"
+              tabindex="0"
+              role="img"
+              aria-label="Porcentagem de pedidos que falharam: foram descartados porque a fila de um componente encheu, ou passaram por um componente fora do ar."
+              data-tip="Porcentagem de pedidos que falharam: foram descartados porque a fila de um componente encheu, ou passaram por um componente fora do ar."
+              >i</span
+            >
+          </figcaption>
+          <canvas id="chErr" width="320" height="90"></canvas>
+        </figure>
+        <figure>
+          <figcaption>
+            RPS
+            <span
+              class="info"
+              tabindex="0"
+              role="img"
+              aria-label="Requisições por segundo que os usuários enviam ao sistema (usuários × req/usuário/s × pico). É a carga de entrada."
+              data-tip="Requisições por segundo que os usuários enviam ao sistema (usuários × req/usuário/s × pico). É a carga de entrada."
+              >i</span
+            >
+          </figcaption>
+          <canvas id="chRps" width="320" height="90"></canvas>
+        </figure>
+      </div>
+      <div class="log">
+        <h2>Onde quebrou</h2>
+        <ul id="log"></ul>
+      </div>
+    </footer>
+    <script type="module" src="src/ui/main.js"></script>
+  </body>
+</html>
